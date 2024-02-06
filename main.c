@@ -79,7 +79,7 @@ int main() {
 
 // Function to generate a monthly report of finances
 void monthlyReport() {
-    printf("\n\t\t -------- Monthly Report -------- \n");
+    printf("\n\t\t -------- Monthly Report -------- \n\n");
     printf(" Total income = %.2f \n Total expenses = %.2f \n Remaining balance = %.2f \n", totalIncome, totalExpenses, balance);
 
     investmentPlans(); // Suggest investment plans based on remaining balance
@@ -160,7 +160,7 @@ void enterExpenses() {
 void checkExpenses() {
     char answer2; // Use a different variable to avoid confusion
     do {
-        system("cls"); // Clear the screen
+        // system("cls"); // Clear the screen
         printf("\n\tDo you want to check expenses for a specific day? (Y/N): ");
         scanf(" %c", &answer2);
 
@@ -178,7 +178,7 @@ void checkExpenses() {
                 for (int i = 0; i < MaxEntries; i++) {
                     if (expenses[targetDay - 1][i].dayOfMonth == targetDay) {
                         found = 1; // Mark as found
-                        printf("\tCategory: %s, Amount: Rs.%.2f\n", expenses[targetDay - 1][i].category, expenses[targetDay - 1][i].amount);
+                        printf("\t\nExpense Category: %s\n Amount: Rs.%.2f\n\n", expenses[targetDay - 1][i].category, expenses[targetDay - 1][i].amount);
                     }
                 }
                 if (!found) {
@@ -339,33 +339,56 @@ void water_bill() {
     printf("Enter month: ");
     scanf("%s", month);
 
+    // Input: last month's meter reading
+    char yn1, yn2;
+    int previous_reading, lastMonthReading, currentMonthReading;
+    char previous_month[20];
 
-    //Display the last month meter reading
-    char input_yn;
-    printf("Do you want to know last month's meter reading?\nPlease enter (Y/N): ");
-    scanf(" %c", &input_yn);
+    printf("\nDo you want to know previous month's meter reading?\n");
+    do{
+        printf("Yes(Y/y) | No(N/n) :");
+        scanf(" %c", &yn1);
+        if(yn1 == 'y' || yn1 == 'Y') {
+            FILE *flmr;
+            flmr = fopen("last_reading.txt", "r");
 
-    while (input_yn == 'y' || input_yn == 'Y') {
-        FILE *flmr;
-        flmr = fopen("last_reading.txt", "r");
-        char last_reading[100];
+            if (flmr == NULL) {
+                printf("Sorry, No readings in the file\n");
+                printf("\nEnter last month's meter reading: ");
+                scanf("%d", &lastMonthReading);
+                break;
 
-        if (flmr == NULL) {
-            printf("Sorry, No readings in the file\n");
+            } else {
+                fscanf(flmr, "%s %d",previous_month, &previous_reading);
+                printf("\n%s meter reading: %d\n",previous_month,previous_reading);
+                fclose(flmr);
+            }
+
+            printf("\nDo you want to get this meter reading for Last meter reading?\n");
+            do{
+                printf("Yes(Y/y) | No(N/n) :");
+                scanf(" %c", &yn2);
+                if(yn2 == 'y' || yn2 == 'Y'){
+                    lastMonthReading = previous_reading;
+                    printf("\nLast month's meter reading: %d\n",lastMonthReading);
+                    break;
+                }else if(yn2 == 'n' || yn2 == 'N'){
+                    printf("\nEnter last month's meter reading: ");
+                    scanf("%d", &lastMonthReading);
+                    break;
+                }
+            }while(yn2 != 'y' || yn2 != 'Y' || yn2 != 'n' || yn2 != 'N');
             break;
-        } else {
-            fscanf(flmr, "%s", last_reading);
-            printf("Last month's meter reading: %s\n", last_reading);
-            fclose(flmr);
+
+        }else if(yn1 == 'n' || yn1 == 'N'){
+            printf("\nEnter last month's meter reading: ");
+            scanf("%d", &lastMonthReading);
             break;
         }
-    }
+    }while(yn1 != 'y' || yn1 != 'Y' || yn1 != 'n' || yn1 != 'N');
 
-    // Input: last month's meter reading and current month's meter reading
-    int lastMonthReading, currentMonthReading;
 
-    printf("\nEnter last month's meter reading: ");
-    scanf("%d", &lastMonthReading);
+    //Input: current month's meter reading
 
     printf("Enter current month's meter reading: ");
     scanf("%d", &currentMonthReading);
@@ -402,7 +425,7 @@ void water_bill() {
     // Update the file with the current month's reading
     FILE *flmr = fopen("last_reading.txt", "w");
     if (flmr != NULL) {
-        fprintf(flmr, "%d", currentMonthReading);
+        fprintf(flmr, "%s %d",month, currentMonthReading);
         fclose(flmr);
     }
 
@@ -421,6 +444,7 @@ void water_bill() {
         printf("Can't print in the file");
     }
 
+    ReturnOrExit();
 }
 
 

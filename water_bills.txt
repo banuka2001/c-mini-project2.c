@@ -1,0 +1,8 @@
+
+5 Water Bill Details:
+
+	Units Consumed: 5000
+	Usage Charge: Rs.21650.00
+	Service Charge: Rs.4223330.00
+	Total Bill: Rs.4244980.00
+
